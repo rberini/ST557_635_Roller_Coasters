@@ -98,7 +98,9 @@ library(conflicted)
 library(skimr)
 library(tidyverse)
 library(janitor)
+library(sf)
 library(knitr)
+library(kableExtra)
 
 conflicts_prefer(dplyr::lag)
 conflicts_prefer(dplyr::filter)
@@ -119,3 +121,45 @@ glimpse(roller_coasters)
 ```{r}
 skim(roller_coasters)
 ```
+
+```{r}
+roller_coasters <- roller_coasters |>
+  clean_names(case = "big_camel")
+```
+
+
+```{r}
+roller_coasters <- roller_coasters |>
+ mutate(
+   across(c(CensusRegion, Type, Design, Make), factor),
+   State = factor(State, levels = state.name, ordered = FALSE),
+   AgeGroup = factor(AgeGroup, 
+                    levels = c("1:Older", "2:Recent", "3:Newest"),
+                    labels = c("Older", "Recent", "Newest"),
+                    ordered = TRUE),
+   Scale = factor(Scale, 
+                 levels = c("Kiddie", "Family", "Thrill", "Extreme"), 
+                 ordered = TRUE),
+   Inversions = factor(Inversions, 
+                      levels = c("No", "Yes"), 
+                      labels = c("0", "1"),
+                      ordered = TRUE)
+ )
+```
+
+```{r}
+skim(roller_coasters)
+```
+
+```{r}
+summary(roller_coasters)
+```
+
+```{r}
+roller_coasters |>
+ select(-Boundary) |>
+ kable() |>
+ kable_styling() |>
+ scroll_box(width = "100%", height = "400px")
+```
+
