@@ -275,7 +275,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="read-and-inspect-data" class="level2">
 <h2 class="anchored" data-anchor-id="read-and-inspect-data">Read and inspect data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>roller_coasters <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"635USrollercoasters.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>roller_coasters <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/635USrollercoasters.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 635 Columns: 21
 ── Column specification ────────────────────────────────────────────────────────
@@ -15088,6 +15088,10 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 </div>
 
 </div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(roller_coasters, <span class="st">"data/roller_coasters.rds"</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(roller_coasters, <span class="at">file =</span> <span class="st">"data/roller_coasters.RData"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 

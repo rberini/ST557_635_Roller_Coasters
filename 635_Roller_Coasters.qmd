@@ -111,7 +111,7 @@ options(scipen = 999, digits = 2)
 ## Read and inspect data
 
 ```{r}
-roller_coasters <- read_csv("635USrollercoasters.csv")
+roller_coasters <- read_csv("data/635USrollercoasters.csv")
 ```
 
 ```{r}
@@ -161,5 +161,10 @@ roller_coasters |>
  kable() |>
  kable_styling() |>
  scroll_box(width = "100%", height = "400px")
+```
+
+```{r}
+saveRDS(roller_coasters, "data/roller_coasters.rds")
+save(roller_coasters, file = "data/roller_coasters.RData")
 ```
 
