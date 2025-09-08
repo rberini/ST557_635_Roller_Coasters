@@ -192,6 +192,20 @@ quant_attributes <- c("MaxHeight", "TopSpeed", "Length", "Drop", "Duration", "Nu
 ```
 
 ```{r}
+#| include: false
+
+for (i in quant_attributes) {
+  
+  Extreme <- roller_coasters |> filter(Scale == "Extreme") |> pull({{i}})
+  Thrill <- roller_coasters |> filter(Scale == "Thrill") |> pull({{i}})
+  
+  t.test(Extreme, Thrill, var.equal = FALSE) |>
+    print()
+}
+```
+
+
+```{r}
 #| results: asis
 
 for (i in quant_attributes) {
