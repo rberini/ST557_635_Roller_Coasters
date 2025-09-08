@@ -3,6 +3,9 @@ title: "635 Roller Coasters"
 author: "Robert Berini"
 format: html
 editor: visual
+execute:
+  warning: false
+  message: false
 ---
 
 ## Introduction and Overview
@@ -32,41 +35,41 @@ The dataset includes the following variables organized by category:
 
 ### Identification
 
--   Coaster: Name of the roller coaster
--   Park: Name of the associated amusement park
--   Make: Name of the manufacturer of the roller coaster
--   Scale: Type of experience expected (Kiddie, Family, Thrill, Extreme)
+-   **Coaster**: Name of the roller coaster
+-   **Park**: Name of the associated amusement park
+-   **Make**: Name of the manufacturer of the roller coaster
+-   **Scale**: Type of experience expected (Kiddie, Family, Thrill, Extreme)
 
 ### Location
 
--   City: City where the roller coaster is located
--   State: State where the roller coaster is located
--   Census Region: US region (South, West, Midwest, Northeast)
--   Latitude/Longitude: Geographic coordinates for mapping
--   Boundary: Geospatial state boundary data for mapping purposes
+-   **City**: City where the roller coaster is located
+-   **State**: State where the roller coaster is located
+-   **Census Region**: US region (South, West, Midwest, Northeast)
+-   **Latitude/Longitude**: Geographic coordinates for mapping
+-   **Boundary**: Geospatial state boundary data for mapping purposes
 
 ### Historical Information
 
--   Year Opened: Year when the roller coaster first opened
--   Age Group: Categorized age intervals:
+-   **Year Opened**: Year when the roller coaster first opened
+-   **Age Group**: Categorized age intervals:
     -   1: Older (Built between 1900-1979)
     -   2: Recent (1980-1999)
     -   3: Newest (2000-current)
 
 ### Physical Characteristics
 
--   Max Height (ft): Highest point of the roller coaster
--   Length (ft): Total length of the roller coaster track
--   Drop (ft): Length of largest gap between high and low points
--   Duration (s): Time length of the roller coaster ride
--   Top Speed (mph): Maximum speed achieved during the ride
--   \# of Inversions: Number of times the roller coaster flips passengers
--   Inversions?: Whether roller coaster flips passengers at any point (Yes/No)
+-   **Max Height** (ft): Highest point of the roller coaster
+-   **Length** (ft): Total length of the roller coaster track
+-   **Drop** (ft): Length of largest gap between high and low points
+-   **Duration** (s): Time length of the roller coaster ride
+-   **Top Speed** (mph): Maximum speed achieved during the ride
+-   **\# of Inversions**: Number of times the roller coaster flips passengers
+-   **Inversions?**: Whether roller coaster flips passengers at any point (Yes/No)
 
 ### Design and Construction
 
--   Type: Material of track construction (Steel or Wooden)
--   Design: How passengers are positioned in the roller coaster, including:
+-   **Type**: Material of track construction (Steel or Wooden)
+-   **Design**: How passengers are positioned in the roller coaster, including:
     -   Sit Down: Traditional roller coaster ridden while sitting
     -   Stand Up: Coaster ridden while standing up
     -   Inverted: Trains travel beneath rather than on top of track
@@ -84,15 +87,16 @@ The exploratory data analysis (EDA) conducted in this investigation serves to:
 -   Understand the structure and distribution of roller coaster characteristics across the United States
 -   Explore how thrill level classifications relate to measurable physical characteristics and design features
 
-This comprehensive examination will reveal interesting patterns about roller coaster design, regional preferences, and the evolution of thrill ride technology in American amusement parks.
+The main investigative question is: What are the defining characteristics that distinguish **Extreme** roller coasters from **Thrill** roller coasters?
 
-## Load required packages
+## Load Packages and Set Options
 
 ```{r}
 library(conflicted)
 library(skimr)
 library(tidyverse)
 library(janitor)
+library(broom)
 library(sf)
 library(knitr)
 library(kableExtra)
@@ -108,7 +112,7 @@ font_add_google("Roboto Mono", "Roboto Mono")
 showtext_auto()
 ```
 
-## Read and inspect data
+## Read, Inspect and Prepare Data
 
 ```{r}
 roller_coasters <- read_csv("data/635USrollercoasters.csv")
@@ -166,6 +170,8 @@ roller_coasters |>
 save(roller_coasters, file = "data/roller_coasters.RData")
 ```
 
+## Exploratory Data Analysis
+
 ```{r}
 roller_coasters |>
   filter(Scale %in% c("Thrill", "Extreme")) |>
@@ -186,12 +192,20 @@ quant_attributes <- c("MaxHeight", "TopSpeed", "Length", "Drop", "Duration", "Nu
 ```
 
 ```{r}
+#| results: asis
+
 for (i in quant_attributes) {
-  print(i)
+  cat("T-test for", i, ":\n")
+  
   Extreme <- roller_coasters |> filter(Scale == "Extreme") |> pull({{i}})
   Thrill <- roller_coasters |> filter(Scale == "Thrill") |> pull({{i}})
   
-  print(t.test(Extreme, Thrill, var.equal = F))
+  t.test(Extreme, Thrill, var.equal = FALSE) |>
+    tidy() |>
+    kable() |>
+    print()
+  
+  cat("\n")
 }
 ```
 
