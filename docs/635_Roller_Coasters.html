@@ -15543,11 +15543,12 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>         TopSpeed,</span>
 <span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>         Length,</span>
 <span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>         Drop,</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>         NumberOfInversions) <span class="sc">|&gt;</span></span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(MaxHeight)) <span class="sc">|&gt;</span></span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>() <span class="sc">|&gt;</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"100%"</span>, <span class="at">height =</span> <span class="st">"400px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>         NumberOfInversions,</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>         Design) <span class="sc">|&gt;</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(MaxHeight)) <span class="sc">|&gt;</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>() <span class="sc">|&gt;</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>() <span class="sc">|&gt;</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scroll_box</span>(<span class="at">width =</span> <span class="st">"100%"</span>, <span class="at">height =</span> <span class="st">"400px"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
 <table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
@@ -15561,6 +15562,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">Length</th>
 <th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">Drop</th>
 <th data-quarto-table-cell-role="th" style="text-align: right; position: sticky; top: 0; background-color: #FFFFFF;">NumberOfInversions</th>
+<th data-quarto-table-cell-role="th" style="text-align: left; position: sticky; top: 0; background-color: #FFFFFF;">Design</th>
 </tr>
 </thead>
 <tbody>
@@ -15573,6 +15575,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">4000</td>
 <td style="text-align: right;">197</td>
 <td style="text-align: right;">8</td>
+<td style="text-align: left;">Sit Down</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Steel Vengeance</td>
@@ -15583,6 +15586,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">5740</td>
 <td style="text-align: right;">200</td>
 <td style="text-align: right;">4</td>
+<td style="text-align: left;">Sit Down</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Alpengeist</td>
@@ -15593,6 +15597,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">3828</td>
 <td style="text-align: right;">170</td>
 <td style="text-align: right;">6</td>
+<td style="text-align: left;">Inverted</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Viper</td>
@@ -15603,6 +15608,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">3830</td>
 <td style="text-align: right;">171</td>
 <td style="text-align: right;">7</td>
+<td style="text-align: left;">Sit Down</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">GateKeeper</td>
@@ -15613,6 +15619,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">4164</td>
 <td style="text-align: right;">164</td>
 <td style="text-align: right;">6</td>
+<td style="text-align: left;">Wing</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Superman Krypton Coaster</td>
@@ -15623,6 +15630,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">4025</td>
 <td style="text-align: right;">160</td>
 <td style="text-align: right;">6</td>
+<td style="text-align: left;">Sit Down</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Banshee</td>
@@ -15633,6 +15641,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">4124</td>
 <td style="text-align: right;">150</td>
 <td style="text-align: right;">7</td>
+<td style="text-align: left;">Inverted</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Dominator</td>
@@ -15643,6 +15652,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">4210</td>
 <td style="text-align: right;">148</td>
 <td style="text-align: right;">5</td>
+<td style="text-align: left;">Sit Down</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Riddler's Revenge</td>
@@ -15653,6 +15663,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">4370</td>
 <td style="text-align: right;">146</td>
 <td style="text-align: right;">6</td>
+<td style="text-align: left;">Stand Up</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Medusa</td>
@@ -15663,6 +15674,7 @@ $ Boundary          &lt;chr&gt; "{\"type\":\"Feature\",\"properties\":{\"CENSUSA
 <td style="text-align: right;">3937</td>
 <td style="text-align: right;">150</td>
 <td style="text-align: right;">7</td>
+<td style="text-align: left;">Sit Down</td>
 </tr>
 </tbody>
 </table>

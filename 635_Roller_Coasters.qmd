@@ -349,7 +349,8 @@ roller_coasters |>
          TopSpeed,
          Length,
          Drop,
-         NumberOfInversions) |>
+         NumberOfInversions,
+         Design) |>
   arrange(desc(MaxHeight)) |>
   kable() |>
   kable_styling() |>
