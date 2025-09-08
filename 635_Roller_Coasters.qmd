@@ -128,26 +128,47 @@ skim(roller_coasters)
 
 ```{r}
 roller_coasters <- roller_coasters |>
-  clean_names(case = "big_camel")
+  clean_names(case = "big_camel") |>
+  mutate(
+    across(c(CensusRegion, Type, Design, Make), factor),
+    State = factor(State, levels = state.name, ordered = FALSE),
+    AgeGroup = factor(
+      AgeGroup,
+      levels = c("1:Older", "2:Recent", "3:Newest"),
+      labels = c("Older", "Recent", "Newest"),
+      ordered = TRUE
+    ),
+    Scale = factor(
+      Scale,
+      levels = c("Kiddie", "Family", "Thrill", "Extreme"),
+      ordered = TRUE
+    ),
+    Inversions = factor(
+      Inversions,
+      levels = c("No", "Yes"),
+      labels = c("0", "1"),
+      ordered = TRUE
+    )
+  )
 ```
 
 ```{r}
-roller_coasters <- roller_coasters |>
- mutate(
-   across(c(CensusRegion, Type, Design, Make), factor),
-   State = factor(State, levels = state.name, ordered = FALSE),
-   AgeGroup = factor(AgeGroup, 
-                    levels = c("1:Older", "2:Recent", "3:Newest"),
-                    labels = c("Older", "Recent", "Newest"),
-                    ordered = TRUE),
-   Scale = factor(Scale, 
-                 levels = c("Kiddie", "Family", "Thrill", "Extreme"), 
-                 ordered = TRUE),
-   Inversions = factor(Inversions, 
-                      levels = c("No", "Yes"), 
-                      labels = c("0", "1"),
-                      ordered = TRUE)
- )
+# roller_coasters <- roller_coasters |>
+#  mutate(
+#    across(c(CensusRegion, Type, Design, Make), factor),
+#    State = factor(State, levels = state.name, ordered = FALSE),
+#    AgeGroup = factor(AgeGroup, 
+#                     levels = c("1:Older", "2:Recent", "3:Newest"),
+#                     labels = c("Older", "Recent", "Newest"),
+#                     ordered = TRUE),
+#    Scale = factor(Scale, 
+#                  levels = c("Kiddie", "Family", "Thrill", "Extreme"), 
+#                  ordered = TRUE),
+#    Inversions = factor(Inversions, 
+#                       levels = c("No", "Yes"), 
+#                       labels = c("0", "1"),
+#                       ordered = TRUE)
+#  )
 ```
 
 ```{r}
@@ -241,6 +262,15 @@ roller_coasters |>
 ```
 
 ```{r}
+#| include: false
+
+ggsave("images/roller_coaster_boxplots.pdf", units = "cm", dpi = 320, width = 21, height = 15)
+ggsave("images/roller_coaster_boxplots.eps", units = "cm", dpi = 320, width = 21, height = 15)
+ggsave("images/roller_coaster_boxplots.png", units = "px", dpi = 320, width = 2646, height = 1890, type = "cairo-png", bg = "#FFFFFF")
+```
+
+
+```{r}
 roller_coasters |>
   filter(Scale %in% c("Thrill", "Extreme")) |>
   ggplot(aes(x = Length, y = MaxHeight, color = Scale)) +
@@ -257,6 +287,15 @@ roller_coasters |>
 ```
 
 ```{r}
+#| include: false
+
+ggsave("images/length_height_scatter.pdf", units = "cm", dpi = 320, width = 21, height = 15)
+ggsave("images/length_height_scatter.eps", units = "cm", dpi = 320, width = 21, height = 15)
+ggsave("images/length_height_scatter.png", units = "px", dpi = 320, width = 2646, height = 1890, type = "cairo-png", bg = "#FFFFFF")
+```
+
+
+```{r}
 roller_coasters |>
   filter(Scale %in% c("Thrill", "Extreme")) |>
   ggplot(aes(x = TopSpeed, y = Duration, color = Scale)) +
@@ -271,6 +310,15 @@ roller_coasters |>
   theme_minimal() +
   theme(text = element_text(family = "Roboto"))
 ```
+
+```{r}
+#| include: false
+
+ggsave("images/speed_duration_scatter.pdf", units = "cm", dpi = 320, width = 21, height = 15)
+ggsave("images/speed_duration_scatter.eps", units = "cm", dpi = 320, width = 21, height = 15)
+ggsave("images/speed_duration_scatter.png", units = "px", dpi = 320, width = 2646, height = 1890, type = "cairo-png", bg = "#FFFFFF")
+```
+
 
 ```{r}
 roller_coasters |>
