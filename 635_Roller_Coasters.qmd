@@ -10,11 +10,15 @@ execute:
 
 ## Introduction and Overview
 
+This section is taken from the original project documentation. That documentation can be found here: <https://cdn.instepwithdata.org/RollerCoasterInvestigationLessonPlanBite-sized.pdf>
+
 This project examines a comprehensive dataset of roller coasters from US amusement parks that were in operation during Spring 2020. The dataset contains information about 635 roller coasters across 21 categorical and quantitative variables, providing insights into the physical characteristics, design features, and operational details of these popular amusement park attractions.
 
 The investigation focuses on understanding the relationships between different roller coaster characteristics and how these features may vary across different regions of the United States, roller coaster types, and thrill levels.
 
-## Data Source and Collection Methods
+## Data Source
+
+This section is taken from the original project documentation. That documentation can be found here: <https://cdn.instepwithdata.org/RollerCoasterInvestigationLessonPlanBite-sized.pdf>
 
 The dataset was compiled from multiple authoritative sources specializing in roller coaster documentation. The primary data source was the Roller Coaster Database (RCDB), which claims to contain comprehensive information about all operational roller coasters worldwide. At the time of data collection, all operating US roller coasters according to RCDB were identified and included.
 
@@ -30,6 +34,8 @@ These sources all contain current information about roller coasters and are cons
 The data collection process involved significant data processing work, including organizing, structuring, cleaning, and transforming the raw information to create a usable analytical dataset.
 
 ## Variable Descriptions
+
+This section is adapted from the original project documentation. That documentation can be found here: <https://cdn.instepwithdata.org/RollerCoasterInvestigationLessonPlanBite-sized.pdf>
 
 The dataset includes the following variables organized by category:
 
@@ -48,7 +54,7 @@ The dataset includes the following variables organized by category:
 -   **Latitude/Longitude**: Geographic coordinates for mapping
 -   **Boundary**: Geospatial state boundary data for mapping purposes
 
-### Historical Information
+### Age
 
 -   **Year Opened**: Year when the roller coaster first opened
 -   **Age Group**: Categorized age intervals:
@@ -56,7 +62,7 @@ The dataset includes the following variables organized by category:
     -   2: Recent (1980-1999)
     -   3: Newest (2000-current)
 
-### Physical Characteristics
+### Physical Attributes
 
 -   **Max Height** (ft): Highest point of the roller coaster
 -   **Length** (ft): Total length of the roller coaster track
@@ -66,7 +72,7 @@ The dataset includes the following variables organized by category:
 -   **\# of Inversions**: Number of times the roller coaster flips passengers
 -   **Inversions?**: Whether roller coaster flips passengers at any point (Yes/No)
 
-### Design and Construction
+### Design Attributes
 
 -   **Type**: Material of track construction (Steel or Wooden)
 -   **Design**: How passengers are positioned in the roller coaster, including:
@@ -83,7 +89,7 @@ The dataset includes the following variables organized by category:
 
 The exploratory data analysis (EDA) conducted in this investigation serves to:
 
--   Perform data validation and identify any quality issues or missing values
+-   Perform data validation and manipulation, and identify any quality issues or missing values
 -   Understand the structure and distribution of roller coaster characteristics across the United States
 -   Explore how thrill level classifications relate to measurable physical characteristics and design features
 
@@ -100,6 +106,8 @@ library(broom)
 library(sf)
 library(knitr)
 library(kableExtra)
+library(webshot2)
+library(magick)
 library(showtext)
 
 conflicts_prefer(dplyr::lag)
@@ -153,25 +161,6 @@ roller_coasters <- roller_coasters |>
 ```
 
 ```{r}
-# roller_coasters <- roller_coasters |>
-#  mutate(
-#    across(c(CensusRegion, Type, Design, Make), factor),
-#    State = factor(State, levels = state.name, ordered = FALSE),
-#    AgeGroup = factor(AgeGroup, 
-#                     levels = c("1:Older", "2:Recent", "3:Newest"),
-#                     labels = c("Older", "Recent", "Newest"),
-#                     ordered = TRUE),
-#    Scale = factor(Scale, 
-#                  levels = c("Kiddie", "Family", "Thrill", "Extreme"), 
-#                  ordered = TRUE),
-#    Inversions = factor(Inversions, 
-#                       levels = c("No", "Yes"), 
-#                       labels = c("0", "1"),
-#                       ordered = TRUE)
-#  )
-```
-
-```{r}
 skim(roller_coasters)
 ```
 
@@ -181,17 +170,17 @@ summary(roller_coasters)
 
 ```{r}
 roller_coasters |>
- select(-Boundary) |>
- kable() |>
- kable_styling() |>
- scroll_box(width = "100%", height = "400px")
+  select(-Boundary) |>
+  kable() |>
+  kable_styling() |>
+  scroll_box(width = "100%", height = "400px")
 ```
 
 ```{r}
 save(roller_coasters, file = "data/roller_coasters.RData")
 ```
 
-## Exploratory Data Analysis
+## Conduct Exploratory Data Analysis
 
 ```{r}
 roller_coasters |>
@@ -209,14 +198,18 @@ roller_coasters |>
 ```
 
 ```{r}
-quant_attributes <- c("MaxHeight", "TopSpeed", "Length", "Drop", "Duration", "NumberOfInversions")
+quant_attributes <- c("MaxHeight",
+                      "TopSpeed",
+                      "Length",
+                      "Drop",
+                      "Duration",
+                      "NumberOfInversions")
 ```
 
 ```{r}
 #| include: false
 
 for (i in quant_attributes) {
-  
   Extreme <- roller_coasters |> filter(Scale == "Extreme") |> pull({{i}})
   Thrill <- roller_coasters |> filter(Scale == "Thrill") |> pull({{i}})
   
@@ -224,7 +217,6 @@ for (i in quant_attributes) {
     print()
 }
 ```
-
 
 ```{r}
 #| results: asis
@@ -251,7 +243,7 @@ roller_coasters |>
   pivot_longer(-Scale, names_to = "Variable", values_to = "Value") |>
   ggplot(aes(x = Scale, y = Value, fill = Scale)) +
   geom_boxplot() +
-  facet_wrap( ~ Variable, scales = "free") +
+  facet_wrap(~ Variable, scales = "free") +
   scale_fill_manual(values = c("Extreme" = "#CC0000", "Thrill" = "#427E93")) +
   labs(title = "Roller Coaster Characteristics by Scale",
        x = "Scale",
@@ -264,11 +256,30 @@ roller_coasters |>
 ```{r}
 #| include: false
 
-ggsave("images/roller_coaster_boxplots.pdf", units = "cm", dpi = 320, width = 21, height = 15)
-ggsave("images/roller_coaster_boxplots.eps", units = "cm", dpi = 320, width = 21, height = 15)
-ggsave("images/roller_coaster_boxplots.png", units = "px", dpi = 320, width = 2646, height = 1890, type = "cairo-png", bg = "#FFFFFF")
+ggsave(
+  "images/roller_coaster_boxplots.pdf",
+  units = "cm",
+  dpi = 320,
+  width = 21,
+  height = 15
+)
+ggsave(
+  "images/roller_coaster_boxplots.eps",
+  units = "cm",
+  dpi = 320,
+  width = 21,
+  height = 15
+)
+ggsave(
+  "images/roller_coaster_boxplots.png",
+  units = "px",
+  dpi = 320,
+  width = 2646,
+  height = 1890,
+  type = "cairo-png",
+  bg = "#FFFFFF"
+)
 ```
-
 
 ```{r}
 roller_coasters |>
@@ -289,11 +300,30 @@ roller_coasters |>
 ```{r}
 #| include: false
 
-ggsave("images/length_height_scatter.pdf", units = "cm", dpi = 320, width = 21, height = 15)
-ggsave("images/length_height_scatter.eps", units = "cm", dpi = 320, width = 21, height = 15)
-ggsave("images/length_height_scatter.png", units = "px", dpi = 320, width = 2646, height = 1890, type = "cairo-png", bg = "#FFFFFF")
+ggsave(
+  "images/length_height_scatter.pdf",
+  units = "cm",
+  dpi = 320,
+  width = 21,
+  height = 15
+)
+ggsave(
+  "images/length_height_scatter.eps",
+  units = "cm",
+  dpi = 320,
+  width = 21,
+  height = 15
+)
+ggsave(
+  "images/length_height_scatter.png",
+  units = "px",
+  dpi = 320,
+  width = 2646,
+  height = 1890,
+  type = "cairo-png",
+  bg = "#FFFFFF"
+)
 ```
-
 
 ```{r}
 roller_coasters |>
@@ -314,11 +344,30 @@ roller_coasters |>
 ```{r}
 #| include: false
 
-ggsave("images/speed_duration_scatter.pdf", units = "cm", dpi = 320, width = 21, height = 15)
-ggsave("images/speed_duration_scatter.eps", units = "cm", dpi = 320, width = 21, height = 15)
-ggsave("images/speed_duration_scatter.png", units = "px", dpi = 320, width = 2646, height = 1890, type = "cairo-png", bg = "#FFFFFF")
+ggsave(
+  "images/speed_duration_scatter.pdf",
+  units = "cm",
+  dpi = 320,
+  width = 21,
+  height = 15
+)
+ggsave(
+  "images/speed_duration_scatter.eps",
+  units = "cm",
+  dpi = 320,
+  width = 21,
+  height = 15
+)
+ggsave(
+  "images/speed_duration_scatter.png",
+  units = "px",
+  dpi = 320,
+  width = 2646,
+  height = 1890,
+  type = "cairo-png",
+  bg = "#FFFFFF"
+)
 ```
-
 
 ```{r}
 roller_coasters |>
@@ -328,8 +377,26 @@ roller_coasters |>
   adorn_percentages("row") |>
   adorn_pct_formatting() |>
   adorn_ns() |>
-  adorn_title("Design by Scale", placement = "top") |>
+  adorn_title("Scale", placement = "combined") |>
   kable()
+```
+
+```{r}
+#| include: false
+
+roller_coasters |>
+  filter(Scale %in% c("Thrill", "Extreme")) |>
+  mutate(Scale = droplevels(Scale)) |>
+  tabyl(Scale, Design) |>
+  adorn_percentages("row") |>
+  adorn_pct_formatting() |>
+  adorn_ns() |>
+  adorn_title("Scale", placement = "combined") |>
+  kable() |>
+  kable_styling(font_size = 8,
+                bootstrap_options = c("condensed", "striped")) |>
+  scroll_box(width = "380px", height = "135px") |>
+  save_kable("images/scale_design_table.png", zoom = 3)
 ```
 
 ```{r}
@@ -355,4 +422,34 @@ roller_coasters |>
   kable() |>
   kable_styling() |>
   scroll_box(width = "100%", height = "400px")
+```
+
+```{r}
+#| include: false
+
+roller_coasters |>
+  filter(Scale == "Extreme") |>
+  filter(
+    MaxHeight >= quantile(MaxHeight, 0.75, na.rm = TRUE),
+    TopSpeed >= quantile(TopSpeed, 0.75, na.rm = TRUE),
+    Length >= quantile(Length, 0.75, na.rm = TRUE),
+    Drop >= quantile(Drop, 0.75, na.rm = TRUE),
+    NumberOfInversions >= quantile(NumberOfInversions, 0.75, na.rm = TRUE)
+  ) |>
+  select(Coaster,
+         Park,
+         MaxHeight,
+         TopSpeed,
+         Length,
+         Drop,
+         NumberOfInversions,
+         Design) |>
+  rename(Inversions = NumberOfInversions) |>
+  mutate(Coaster = str_trunc(Coaster, 12), Park = str_trunc(Park, 10)) |>
+  arrange(desc(MaxHeight)) |>
+  kable() |>
+  kable_styling(font_size = 8,
+                bootstrap_options = c("condensed", "striped")) |>
+  scroll_box(width = "380px", height = "271px") |>
+  save_kable("images/extreme_coasters_table.png", zoom = 3)
 ```
