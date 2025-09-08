@@ -9,7 +9,7 @@ editor: visual
 
 This project examines a comprehensive dataset of roller coasters from US amusement parks that were in operation during Spring 2020. The dataset contains information about 635 roller coasters across 21 categorical and quantitative variables, providing insights into the physical characteristics, design features, and operational details of these popular amusement park attractions.
 
-The investigation focuses on understanding the relationships between different roller coaster characteristics and how these features vary across different regions of the United States, roller coaster types, and thrill levels.
+The investigation focuses on understanding the relationships between different roller coaster characteristics and how these features may vary across different regions of the United States, roller coaster types, and thrill levels.
 
 ## Data Source and Collection Methods
 
@@ -30,64 +30,59 @@ The data collection process involved significant data processing work, including
 
 The dataset includes the following variables organized by category:
 
-### Identification and Location
+### Identification
 
--   **Coaster**: Name of the roller coaster
--   **Park**: Name of the amusement park where the roller coaster is located
--   **City**: City where the roller coaster is located
--   **State**: State where the roller coaster is located
--   **Census Region**: US region (South, West, Midwest, Northeast)
--   **Latitude/Longitude**: Geographic coordinates for mapping
--   **Boundary**: Geospatial state boundary data for mapping purposes
+-   Coaster: Name of the roller coaster
+-   Park: Name of the associated amusement park
+-   Make: Name of the manufacturer of the roller coaster
+-   Scale: Type of experience expected (Kiddie, Family, Thrill, Extreme)
 
-### Physical Characteristics
+### Location
 
--   **Max Height (ft)**: Highest point of the roller coaster
--   **Top Speed (mph)**: Maximum speed achieved during the ride
--   **Length (ft)**: Total length of the roller coaster track
--   **Drop (ft)**: Length of largest gap between high and low points
--   **Duration (s)**: Time length of the roller coaster ride
-
-### Design and Construction
-
--   **Type**: Material of track construction (Steel or Wooden)
--   **Design**: How passengers are positioned in the roller coaster, including:
-    -   **Sit Down**: Traditional roller coaster ridden while sitting
-    -   **Stand Up**: Coaster ridden while standing up
-    -   **Inverted**: Trains travel beneath rather than on top of track
-    -   **Suspended**: Trains travel beneath track and pivot side to side
-    -   **Flying**: Ridden while parallel with the track
-    -   **Wing**: Riders sit on either side of track with nothing above or below
-    -   **Bobsled**: Designed like a bobsled run without fixed track
-    -   **Pipeline**: Riders positioned between rails instead of above or below
-
-### Experience and Thrill Level
-
--   **Scale**: Type of experience expected (Kiddie, Family, Thrill, Extreme)
--   **Inversions?**: Whether roller coaster flips passengers at any point (Yes/No)
--   **\# of Inversions**: Number of times the roller coaster flips passengers
+-   City: City where the roller coaster is located
+-   State: State where the roller coaster is located
+-   Census Region: US region (South, West, Midwest, Northeast)
+-   Latitude/Longitude: Geographic coordinates for mapping
+-   Boundary: Geospatial state boundary data for mapping purposes
 
 ### Historical Information
 
--   **Year Opened**: Year when the roller coaster first opened
--   **Age Group**: Categorized age intervals:
-    -   **1: Older** (Built between 1900-1979)
-    -   **2: Recent** (1980-1999)
-    -   **3: Newest** (2000-current)
--   **Make**: Name of the manufacturer of the roller coaster
+-   Year Opened: Year when the roller coaster first opened
+-   Age Group: Categorized age intervals:
+    -   1: Older (Built between 1900-1979)
+    -   2: Recent (1980-1999)
+    -   3: Newest (2000-current)
+
+### Physical Characteristics
+
+-   Max Height (ft): Highest point of the roller coaster
+-   Length (ft): Total length of the roller coaster track
+-   Drop (ft): Length of largest gap between high and low points
+-   Duration (s): Time length of the roller coaster ride
+-   Top Speed (mph): Maximum speed achieved during the ride
+-   \# of Inversions: Number of times the roller coaster flips passengers
+-   Inversions?: Whether roller coaster flips passengers at any point (Yes/No)
+
+### Design and Construction
+
+-   Type: Material of track construction (Steel or Wooden)
+-   Design: How passengers are positioned in the roller coaster, including:
+    -   Sit Down: Traditional roller coaster ridden while sitting
+    -   Stand Up: Coaster ridden while standing up
+    -   Inverted: Trains travel beneath rather than on top of track
+    -   Suspended: Trains travel beneath track and pivot side to side
+    -   Flying: Ridden while parallel with the track
+    -   Wing: Riders sit on either side of track with nothing above or below
+    -   Bobsled: Designed like a bobsled run without fixed track
+    -   Pipeline: Riders positioned between rails instead of above or below
 
 ## Purpose of Exploratory Data Analysis
 
 The exploratory data analysis (EDA) conducted in this investigation serves to:
 
--   Understand the structure and distribution of roller coaster characteristics across the United States
 -   Perform data validation and identify any quality issues or missing values
--   Investigate relationships between physical characteristics (height, speed, length) and design features
--   Examine regional differences in roller coaster features and preferences
--   Analyze trends in roller coaster development over different time periods
--   Explore how thrill level classifications relate to measurable physical characteristics
--   Identify patterns in roller coaster design evolution and manufacturer preferences
--   Provide insights for amusement park enthusiasts and industry professionals
+-   Understand the structure and distribution of roller coaster characteristics across the United States
+-   Explore how thrill level classifications relate to measurable physical characteristics and design features
 
 This comprehensive examination will reveal interesting patterns about roller coaster design, regional preferences, and the evolution of thrill ride technology in American amusement parks.
 
@@ -101,11 +96,16 @@ library(janitor)
 library(sf)
 library(knitr)
 library(kableExtra)
+library(showtext)
 
 conflicts_prefer(dplyr::lag)
 conflicts_prefer(dplyr::filter)
 
 options(scipen = 999, digits = 2)
+
+font_add_google("Roboto", "Roboto")
+font_add_google("Roboto Mono", "Roboto Mono")
+showtext_auto()
 ```
 
 ## Read and inspect data
@@ -126,7 +126,6 @@ skim(roller_coasters)
 roller_coasters <- roller_coasters |>
   clean_names(case = "big_camel")
 ```
-
 
 ```{r}
 roller_coasters <- roller_coasters |>
@@ -164,7 +163,119 @@ roller_coasters |>
 ```
 
 ```{r}
-saveRDS(roller_coasters, "data/roller_coasters.rds")
 save(roller_coasters, file = "data/roller_coasters.RData")
 ```
 
+```{r}
+roller_coasters |>
+  filter(Scale %in% c("Thrill", "Extreme")) |>
+  group_by(Scale) |>
+  summarise(
+    n = n(),
+    mean_height = mean(MaxHeight, na.rm = TRUE),
+    mean_speed = mean(TopSpeed, na.rm = TRUE),
+    mean_length = mean(Length, na.rm = TRUE),
+    mean_drop = mean(Drop, na.rm = TRUE),
+    mean_duration = mean(Duration, na.rm = TRUE),
+    mean_inversions = mean(NumberOfInversions, na.rm = TRUE)
+  )
+```
+
+```{r}
+quant_attributes <- c("MaxHeight", "TopSpeed", "Length", "Drop", "Duration", "NumberOfInversions")
+```
+
+```{r}
+for (i in quant_attributes) {
+  print(i)
+  Extreme <- roller_coasters |> filter(Scale == "Extreme") |> pull({{i}})
+  Thrill <- roller_coasters |> filter(Scale == "Thrill") |> pull({{i}})
+  
+  print(t.test(Extreme, Thrill, var.equal = F))
+}
+```
+
+```{r}
+roller_coasters |>
+  filter(Scale %in% c("Thrill", "Extreme")) |>
+  select(Scale, all_of(quant_attributes)) |>
+  pivot_longer(-Scale, names_to = "Variable", values_to = "Value") |>
+  ggplot(aes(x = Scale, y = Value, fill = Scale)) +
+  geom_boxplot() +
+  facet_wrap( ~ Variable, scales = "free") +
+  scale_fill_manual(values = c("Extreme" = "#CC0000", "Thrill" = "#427E93")) +
+  labs(title = "Roller Coaster Characteristics by Scale",
+       x = "Scale",
+       y = "Value",
+       fill = "Scale") +
+  theme_minimal() +
+  theme(text = element_text(family = "Roboto"))
+```
+
+```{r}
+roller_coasters |>
+  filter(Scale %in% c("Thrill", "Extreme")) |>
+  ggplot(aes(x = Length, y = MaxHeight, color = Scale)) +
+  geom_point() +
+  scale_color_manual(values = c("Extreme" = "#CC0000", "Thrill" = "#427E93")) +
+  labs(
+    title = "Roller Coaster Length vs Height",
+    x = "Length (ft)",
+    y = "Maximum Height (ft)",
+    color = "Scale"
+  ) +
+  theme_minimal() +
+  theme(text = element_text(family = "Roboto"))
+```
+
+```{r}
+roller_coasters |>
+  filter(Scale %in% c("Thrill", "Extreme")) |>
+  ggplot(aes(x = TopSpeed, y = Duration, color = Scale)) +
+  geom_point() +
+  scale_color_manual(values = c("Extreme" = "#CC0000", "Thrill" = "#427E93")) +
+  labs(
+    title = "Roller Coaster Speed vs Duration",
+    x = "Top Speed (mph)",
+    y = "Duration (s)",
+    color = "Scale"
+  ) +
+  theme_minimal() +
+  theme(text = element_text(family = "Roboto"))
+```
+
+```{r}
+roller_coasters |>
+  filter(Scale %in% c("Thrill", "Extreme")) |>
+  mutate(Scale = droplevels(Scale)) |>
+  tabyl(Scale, Design) |>
+  adorn_percentages("row") |>
+  adorn_pct_formatting() |>
+  adorn_ns() |>
+  adorn_title("Design by Scale", placement = "top") |>
+  kable()
+```
+
+```{r}
+roller_coasters |>
+  filter(Scale == "Extreme") |>
+  filter(
+    MaxHeight >= quantile(MaxHeight, 0.75, na.rm = TRUE),
+    TopSpeed >= quantile(TopSpeed, 0.75, na.rm = TRUE),
+    Length >= quantile(Length, 0.75, na.rm = TRUE),
+    Drop >= quantile(Drop, 0.75, na.rm = TRUE),
+    NumberOfInversions >= quantile(NumberOfInversions, 0.75, na.rm = TRUE)
+  ) |>
+  select(Coaster,
+         Park,
+         State,
+         MaxHeight,
+         TopSpeed,
+         Length,
+         Drop,
+         NumberOfInversions) |>
+  arrange(desc(MaxHeight)) |>
+  kable() |>
+  kable_styling() |>
+  scroll_box(width = "100%", height = "400px")
+```
