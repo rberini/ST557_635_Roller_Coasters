@@ -344,13 +344,13 @@ roller_coasters |>
   ) |>
   select(Coaster,
          Park,
-         State,
          MaxHeight,
          TopSpeed,
          Length,
          Drop,
          NumberOfInversions,
          Design) |>
+  rename(Inversions = NumberOfInversions) |>
   arrange(desc(MaxHeight)) |>
   kable() |>
   kable_styling() |>
